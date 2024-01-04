@@ -1,34 +1,34 @@
 
 
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_gemini_flutter/api.dart';
 import 'package:google_gemini_flutter/controller/google_gemini.dart';
-import 'package:google_gemini_flutter/widgets/loadingText.dart';
 import 'package:google_gemini_flutter/widgets/userText.dart';
 
 import '../Modal/chatModel.dart';
 import '../widgets/botText.dart';
 
 List<chatModel> chat = [];
+List chatData = [];
 List<Widget> chatWidget  =[Image(image: AssetImage("assets/Google-Gemini-Logo-758x473-removebg-preview.png"),),];
 bool isLoading  = false;
 
 
 void addChatUser(chatModel chatItem){
   chat.add(chatItem);
+  chatData.add(createContentEntry(chatItem.type, chatItem.text));
   updateChatWidget();
 }
 
 Future<void> addChatBot(chatModel chatItem)async {
 
   //implement google gemini
+  final res = await generateContentChat(googleApi,chatData);
 
-  final res = await generateContent(googleApi,chatItem.text);
-
-
-  chat.add(chatModel(res, "bot"));
+  chat.add(chatModel(res, "model"));
+  chatData.add(createContentEntry("model", res));
+  print(chatData);
   updateChatWidget();
 }
 
