@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_gemini_flutter/Modal/chatModel.dart';
+import 'package:google_gemini_flutter/api.dart';
 import 'package:google_gemini_flutter/controller/chatItems.dart';
+import 'package:google_gemini_flutter/controller/google_gemini.dart';
+import 'package:google_gemini_flutter/controller/image.dart';
+import 'package:google_gemini_flutter/widgets/imageContainer.dart';
 
 import '../widgets/loadingText.dart';
 
@@ -9,14 +15,64 @@ class chatPage extends StatefulWidget {
 
   @override
   State<chatPage> createState() => _chatPageState();
-  Icon icon = Icon(Icons.send);
+  Icon iconSend = Icon(Icons.send);
 }
 
 
 class _chatPageState extends State<chatPage> {
-  @override
   Widget build(BuildContext context) {
     TextEditingController textEditingController = TextEditingController();
+    @override
+    void cancelImage(){
+      isImage  =false;
+      c1img=null;
+      imgUserText = [];
+      setState(() {
+      });
+    }
+    Future<void> updateChat({chatModel? c1}) async{
+      if(textEditingController.text.isNotEmpty && isLoading==false) {
+        setState(() {
+          widget.iconSend = Icon(Icons.send,color: Colors.grey,);
+        });
+        isLoading = true;
+        if(!isImage) {
+          addChatUser(chatModel(
+              textEditingController.text, "user"));
+          setState(() {});
+          await Future.delayed(
+              const Duration(milliseconds: 250));
+          chatWidget.add(loading());
+          setState(() {});
+          await addChatBot(chatModel(
+              textEditingController.text, "user"),
+          "text");
+        }else{
+          c1img.text = textEditingController.text;
+          chat.add(c1img);
+          chatData.add(createContentEntry(c1img.role, c1img.text));
+          imgUserText = [];
+          updateChatWidget();
+          setState(() {
+          });
+          if(c1img!=null) {
+            await Future.delayed(
+                const Duration(milliseconds: 250));
+            chatWidget.add(loading());
+            //imgUserText = [];
+            setState(() {});
+            await addChatBot(c1img, "img");
+            setState(() {
+            });
+          }
+        }
+        setState(() {
+          widget.iconSend = Icon(Icons.send);
+        });
+        isLoading = false;
+        isImage = false;
+      }
+    }
     return Scaffold(
       backgroundColor: Color(0xffEAF2E9),
       body: SafeArea(
@@ -47,53 +103,46 @@ class _chatPageState extends State<chatPage> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(top: 5,bottom: 5,left: 15,right: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(child: TextField(
-                          controller: textEditingController,
-                          cursorColor: Colors.black,
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                          decoration: const InputDecoration(
-                              border: InputBorder.none, hintText: "What should be explore today?"),
-                        )),
-                        SizedBox(width: 10,),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: imgUserText+[
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            GestureDetector(
-                                onTap: () async {
-                                },
-                                child: Icon(Icons.add)
-                            ),
+                            Expanded(child: TextField(
+                              controller: textEditingController,
+                              cursorColor: Colors.black,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none, hintText: "What should be explore today?"),
+                            )),
                             SizedBox(width: 10,),
-                            GestureDetector(
-                              onTap: () async {
-                                if(textEditingController.text.isNotEmpty && isLoading==false) {
-                                  setState(() {
-                                    widget.icon = Icon(Icons.send,color: Colors.grey,);
-                                  });
-                                  isLoading = true;
-                                  addChatUser(chatModel(
-                                      textEditingController.text, "user"));
-                                  setState(() {});
-                                  await Future.delayed(
-                                      const Duration(milliseconds: 250));
-                                  chatWidget.add(loading());
-                                  setState(() {});
-                                  await addChatBot(chatModel(
-                                      textEditingController.text, "user"));
-                                  setState(() {
-                                    widget.icon = Icon(Icons.send);
-                                  });
-                                  isLoading = false;
-                                }
-                              },
-                                child: widget.icon
-                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                GestureDetector(
+                                    onTap: () async {
+                                      isImage = true;
+                                      final img = await pickImage();
+                                      c1img = await imageChat("",img);
+                                      if(c1img!=null) {
+                                        imgUserText.add(imageContainer(
+                                            File(c1img.imagePath), cancelImage));
+                                        setState(() {});
+                                      }
+                                      },
+                                    child: Icon(Icons.add)
+                                ),
+                                SizedBox(width: 10,),
+                                GestureDetector(
+                                  onTap: updateChat,
+                                    child: widget.iconSend
+                                ),
+                              ],
+                            )
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ),
