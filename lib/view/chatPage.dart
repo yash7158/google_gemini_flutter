@@ -59,29 +59,40 @@ class _chatPageState extends State<chatPage> {
                               border: InputBorder.none, hintText: "What should be explore today?"),
                         )),
                         SizedBox(width: 10,),
-                        GestureDetector(
-                          onTap: () async {
-                            if(textEditingController.text.isNotEmpty && isLoading==false) {
-                              setState(() {
-                                widget.icon = Icon(Icons.send,color: Colors.grey,);
-                              });
-                              isLoading = true;
-                              addChatUser(chatModel(
-                                  textEditingController.text, "user"));
-                              setState(() {});
-                              await Future.delayed(
-                                  const Duration(milliseconds: 250));
-                              chatWidget.add(loading());
-                              setState(() {});
-                              await addChatBot(chatModel(
-                                  textEditingController.text, "user"));
-                              setState(() {
-                                widget.icon = Icon(Icons.send);
-                              });
-                              isLoading = false;
-                            }
-                          },
-                            child: widget.icon
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                                onTap: () async {
+                                },
+                                child: Icon(Icons.add)
+                            ),
+                            SizedBox(width: 10,),
+                            GestureDetector(
+                              onTap: () async {
+                                if(textEditingController.text.isNotEmpty && isLoading==false) {
+                                  setState(() {
+                                    widget.icon = Icon(Icons.send,color: Colors.grey,);
+                                  });
+                                  isLoading = true;
+                                  addChatUser(chatModel(
+                                      textEditingController.text, "user"));
+                                  setState(() {});
+                                  await Future.delayed(
+                                      const Duration(milliseconds: 250));
+                                  chatWidget.add(loading());
+                                  setState(() {});
+                                  await addChatBot(chatModel(
+                                      textEditingController.text, "user"));
+                                  setState(() {
+                                    widget.icon = Icon(Icons.send);
+                                  });
+                                  isLoading = false;
+                                }
+                              },
+                                child: widget.icon
+                            ),
+                          ],
                         )
                       ],
                     ),
