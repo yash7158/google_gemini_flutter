@@ -50,7 +50,7 @@ class imageContainerChat extends StatelessWidget {
           ),
         ),
       ],
-    );;
+    );
   }
 }
 
