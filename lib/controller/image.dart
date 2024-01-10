@@ -1,21 +1,23 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
-import 'package:google_gemini_flutter/api.dart';
-import 'package:google_gemini_flutter/controller/google_gemini.dart';
 import 'package:image_picker/image_picker.dart';
 
-Future<String?> pickImage() async {
+import 'chatItems.dart';
+
+Future<String?> pickImage(ImageSource imageSource) async {
   try {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(source: imageSource);
 
     if (pickedFile != null) {
-      File imageFile = File(pickedFile.path);
-        return pickedFile.path;
+      isImage=true;
+      return pickedFile.path;
     } else {
+      return null;
       // User canceled the picker
     }
   } catch (e) {
+    return  null;
     // Handle any errors
   }
 }

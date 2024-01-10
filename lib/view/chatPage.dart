@@ -2,14 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_gemini_flutter/Modal/chatModel.dart';
-import 'package:google_gemini_flutter/api.dart';
 import 'package:google_gemini_flutter/controller/chatItems.dart';
 import 'package:google_gemini_flutter/controller/google_gemini.dart';
 import 'package:google_gemini_flutter/controller/image.dart';
 import 'package:google_gemini_flutter/widgets/imageContainer.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../widgets/loadingText.dart';
 
+// ignore: must_be_immutable
 class chatPage extends StatefulWidget {
   chatPage({super.key});
 
@@ -123,8 +124,8 @@ class _chatPageState extends State<chatPage> {
                               children: [
                                 GestureDetector(
                                     onTap: () async {
-                                      isImage = true;
-                                      final img = await pickImage();
+                                      final img = await pickImage(ImageSource.gallery);
+                                      print(isImage);
                                       c1img = await imageChat("",img);
                                       if(c1img!=null) {
                                         imgUserText.add(imageContainer(
@@ -133,6 +134,20 @@ class _chatPageState extends State<chatPage> {
                                       }
                                       },
                                     child: Icon(Icons.add)
+                                ),
+                                SizedBox(width: 10,),
+                                GestureDetector(
+                                    onTap: () async {
+                                      final img = await pickImage(ImageSource.camera);
+                                      print(isImage);
+                                      c1img = await imageChat("",img);
+                                      if(c1img!=null) {
+                                        imgUserText.add(imageContainer(
+                                            File(c1img.imagePath), cancelImage));
+                                        setState(() {});
+                                      }
+                                    },
+                                    child: Icon(Icons.camera_alt_rounded)
                                 ),
                                 SizedBox(width: 10,),
                                 GestureDetector(
