@@ -1,16 +1,12 @@
 # google_gemini_flutter
 
-A new Flutter project.
+Implementation of AI-CHAT-BOT with image support using Google Gemini-pro
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+1. First visit https://makersuite.google.com to get the api key
+2. Now clone this repo and go to lib/api.dart
+3. Now enter the api key
+4. Now you can start using the app
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Enjoy:)
